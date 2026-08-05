@@ -27,15 +27,35 @@
                 ;
 };
 
-&spi0 {
+// --- ПРАВИЛЬНАЯ НАСТРОЙКА SPI И ТРЕКБОЛА ---
+
+&spi1 {
     status = "okay";
+
+    trackball: trackball@0 {
+        compatible = "pixart,pmw3610-alt";
+        reg = <0>;
+
+        // ВАЖНО: проверь этот пин — на Charybdis это обычно GPIO 20 с LOW
+        cs-gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
+
+        swap-xy;
+        invert-x;
+        invert-y;
+
+        cpi = <1600>;
+
+        pmw3610-alt,rest1-sample-time-ms = <100>;
+        pmw3610-alt,rest2-sample-time-ms = <200>;
+        pmw3610-alt,rest3-sample-time-ms = <300>;
+        pmw3610-alt,run-downshift-time-ms = <2000>;
+        pmw3610-alt,rest1-downshift-time-ms = <3000>;
+        pmw3610-alt,rest2-downshift-time-ms = <30000>;
+        pmw3610-alt,report-interval-min = <12>;
+    };
 };
 
-&trackball {
-    status = "okay";
-};
-
-// https://github.com/badjeff/zmk-pmw3610-driver
+// Listener, который слушает именно этот узел
 / {
   trackball_listener {
     compatible = "zmk,input-listener";
